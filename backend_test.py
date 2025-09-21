@@ -240,16 +240,16 @@ class PearlEcommerceAPITester:
         """Test API response formats and error handling"""
         print("\n=== Testing API Response Validation ===")
         
-        # Test CORS headers
+        # Test CORS headers with GET request (more reliable than OPTIONS)
         try:
-            response = self.session.options(f"{self.base_url}/pearls")
+            headers = {'Origin': 'https://example.com'}
+            response = self.session.get(f"{self.base_url}/pearls", headers=headers)
             cors_headers = {
                 'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
-                'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
-                'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                'Access-Control-Allow-Credentials': response.headers.get('Access-Control-Allow-Credentials')
             }
-            if any(cors_headers.values()):
-                self.log_test("CORS Headers", True, "CORS headers present")
+            if cors_headers['Access-Control-Allow-Origin']:
+                self.log_test("CORS Headers", True, f"CORS headers present: {cors_headers}")
             else:
                 self.log_test("CORS Headers", False, "CORS headers missing")
         except Exception as e:
